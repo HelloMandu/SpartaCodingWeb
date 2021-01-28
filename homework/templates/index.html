@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <style>
+        *{
+            font-family: 'Jua', sans-serif;
+        }
+        .wrap{
+            max-width: 768px;
+            margin: auto;
+            padding: 8px 16px;
+        }
+        .item-img{
+            background-image: url("http://image.newdaily.co.kr/site/data/img/2019/12/02/2019120200156_0.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            height: 320px;
+            margin-bottom: 24px;
+        }
+        .item-title-wrap{
+            display: flex;
+            align-items: center;
+        }
+        .price{
+            margin-left: 8px;
+            font-size: 1.333rem;
+        }
+        .btn-order{
+            display: block;
+            margin: auto;
+            margin-bottom: 16px;
+        }
+        .item-dollor{
+            font-size: 1.333rem;
+            color: blue;
+            margin-bottom: 8px;
+        }
+        @media screen and (max-width: 420px) {
+            .item-title-wrap{
+                flex-direction: column;
+                align-items: start;
+                justify-content: center;
+            }
+            .price{
+                margin-left: 0px;
+            }
+        }
+    </style>
+</head>
+<script>
+    function getDollor() {
+        $.ajax({
+            type: "GET",
+            url: "https://api.manana.kr/exchange/rate.json",
+            data: {},
+            success: function(response){
+                const {rate} = response[1];
+                $('#dollor').append(rate);
+            }
+        })
+    }
+    $(document).ready(getDollor);
+
+    $(document).ready(function () {
+        getDollor();
+        order_listing();
+    });
+
+    function appendOrder(name, count, address, phone){
+        const tempHtml = `
+            <tr>
+                <th scope="row">${name}</th>
+                <td>${count}</td>
+                <td>${address}</td>
+                <td>${phone}</td>
+            </tr>`;
+        $('#order-list').append(tempHtml);
+    }
+
+    function order_listing() {
+        // 주문목록 보기 API 연결
+        $.ajax({
+            type: "GET",
+            url: "/order",
+            data: {},
+            success: function (response) {
+                const orders = response["orders"];
+                orders.forEach(({name, count, address, phone}) => appendOrder(name, count, address, phone));
+            }
+        })
+    }
+
+    function order() {
+        // 주문하기 API 연결
+        const name = $('#name').val();
+        const count = $('#count').val();
+        const address = $('#address').val();
+        const phone = $('#phone').val();
+        console.log(name, count, address, phone);
+        $.ajax({
+            type: "POST",
+            url: "/order",
+            data: {name, count, address, phone},
+            success: function (response) { // 성공하면
+                alert(response["msg"]);
+                const {name, count, address, phone} = response["order"];
+                appendOrder(name, count, address, phone);
+            }
+        })
+    }
+</script>
+
+<body>
+    <div class="wrap">
+    <div class="item-img"></div>
+    <div class="item-description">
+        <div class="item-title-wrap">
+            <h1>연어를 팝니다</h1>
+            <span class="price">가격:12,000원/개</span>
+        </div>
+        <p class="item-description">깨끗하고 신선한 연어만을 취급한다! 입에서 사르를 녹는 연어초밥입니다.</p>
+        <div class="item-dollor">
+            달러-원 환율: <span id="dollor"></span>
+        </div>
+    </div>
+    <div class="item-order">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">주문자이름</span>
+            </div>
+            <input type="text" id="name" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text">수량</label>
+            </div>
+            <select class="custom-select" id="count">
+                <option selected>-- 수량을 선택하세요 --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >주소</span>
+            </div>
+            <input type="text" id="address" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" >전화번호</span>
+            </div>
+            <input type="tel" id="phone" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
+        </div>
+        <button type="button" onclick="order()" class="btn btn-primary btn-order">주문하기</button>
+        <table class="table" id="order-list">
+		  <thead>
+		  </tbody>
+		</table>
+    </div>
+</div>
+</body>
+
+</html>
