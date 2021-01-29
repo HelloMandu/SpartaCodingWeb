@@ -22,6 +22,9 @@
         crossorigin="anonymous"></script>
 
     <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <meta property="og:title" content="원페이지쇼핑몰" />
+    <meta property="og:description" content="연어를 팝니다" />
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.jpg') }}" />
     <style>
         *{
             font-family: 'Jua', sans-serif;
@@ -177,8 +180,16 @@
             <input type="tel" id="phone" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default">
         </div>
         <button type="button" onclick="order()" class="btn btn-primary btn-order">주문하기</button>
-        <table class="table" id="order-list">
+        <table class="table">
 		  <thead>
+		    <tr>
+		      <th scope="col">이름</th>
+		      <th scope="col">수량</th>
+		      <th scope="col">주소</th>
+		      <th scope="col">전화번호</th>
+		    </tr>
+		  </thead>
+		  <tbody id="order-list">
 		  </tbody>
 		</table>
     </div>
