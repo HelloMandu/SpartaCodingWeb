@@ -1,5 +1,3 @@
-<h1 align="center">항해99 사전준비(웹개발 종합반)</h1> 
-
 ## Tech
  - HTML, CSS
  - JavaScript, jQuery, Ajax
